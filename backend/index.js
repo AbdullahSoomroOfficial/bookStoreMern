@@ -1,27 +1,19 @@
 import express from "express";
 import mongoose from "mongoose";
-import { DATABASE_URL, PORT } from "./configs/globalVariables.config.js";
 import { bookRouter } from "./routes/book.route.js";
-import cors from "cors";
+import path from "path";
 
 const app = express();
 
 // parse json data coming from client
 app.use(express.json());
 
-// custom cors
-app.use(
-  cors()
-  // {
-  //   origin: "http://127.0.0.1:5173",
-  //   methods: ["GET", "POST", "PUT", "DELETE"],
-  //   allowedHeaders: ["Content-Type"],
-  // }
-);
+// Serve static files from the React app's build directory
+app.use(express.static(path.join(process.cwd(), "public")));
 
-// home route
+// home route serving react app
 app.get("/", (req, res) => {
-  res.status(200).send("Welcome to book store");
+  res.sendFile(path.join(process.cwd(), "public", "index.html"));
 });
 
 app.use("/books", bookRouter);
@@ -33,11 +25,11 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(DATABASE_URL)
+  .connect(process.env.DATABASE_URL)
   .then(() => {
     console.log("App connected to database");
-    app.listen(PORT, () => {
-      console.log(`App is listening to port: ${PORT}`);
+    app.listen(process.env.PORT, () => {
+      console.log(`App is listening to port: ${process.env.PORT}`);
     });
   })
   .catch((error) => {
