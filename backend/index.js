@@ -11,11 +11,12 @@ app.use(express.json());
 
 // custom cors
 app.use(
-  cors({
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
-  })
+  cors()
+  // {
+  //   origin: "http://127.0.0.1:5173",
+  //   methods: ["GET", "POST", "PUT", "DELETE"],
+  //   allowedHeaders: ["Content-Type"],
+  // }
 );
 
 // home route
@@ -28,7 +29,7 @@ app.use("/books", bookRouter);
 // error midleware
 app.use((error, req, res, next) => {
   console.log(error);
-  res.send(500).send({ message: error.message });
+  res.status(500).send({ message: error.message });
 });
 
 mongoose

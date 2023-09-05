@@ -23,8 +23,10 @@ bookRouter.post("/", async (req, res, next) => {
 // get all books
 bookRouter.get("/", async (req, res, next) => {
   try {
-    const books = await Book.find();
-    res.status(200).send(books);
+    const { search } = req.query;
+    // if search query is present we filter the books from the database by "title" otherwise send all books
+    const books = await Book.find(search !== "" ? { title: search } : {});
+    res.status(200).send({ count: books.length, data: books });
   } catch (error) {
     next(error);
   }
@@ -36,7 +38,7 @@ bookRouter.get("/:id", async (req, res, next) => {
     const { id } = req.params;
     const book = await Book.findById(id);
     if (!book) {
-      res.status(404).send({ message: "Book not found" });
+      return res.status(404).send({ message: "Book not found" });
     }
     res.status(200).send(book);
   } catch (error) {
@@ -75,7 +77,7 @@ bookRouter.delete("/:id", async (req, res, next) => {
     const { id } = req.params;
     const book = await Book.findByIdAndDelete(id);
     if (!book) {
-      res.status(404).send({ message: "Book not found" });
+      return res.status(404).send({ message: "Book not found" });
     }
     res.status(200).send({ message: "Book deleted successfully" });
   } catch (error) {
