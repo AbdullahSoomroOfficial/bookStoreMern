@@ -12,12 +12,10 @@ const Home = () => {
   const [showType, setShowType] = useState("table");
   const [searchTerm, setSearchTerm] = useState("");
 
-  console.log(books);
-
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`http://localhost:5555/books?search=${searchTerm}`)
+      .get(`/books?search=${searchTerm}`)
       .then((response) => {
         setBooks(response.data.data);
         setLoading(false);
